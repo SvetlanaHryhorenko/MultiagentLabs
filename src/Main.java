@@ -17,6 +17,11 @@ public class Main {
         AgentContainer mainContainer = runtime.createMainContainer(profile);
         Melkor.setMainContainer(mainContainer);
 
+        Agent melkor = new Melkor();
+        AgentController melkorController = mainContainer.acceptNewAgent("DarkLord", melkor);
+        melkorController.start();
+
+
         for(int i = 0; i < Melkor.passengersCount; i++){
             Agent passengerAgent = new PassengerAgent();
             passengerAgents.add(passengerAgent);

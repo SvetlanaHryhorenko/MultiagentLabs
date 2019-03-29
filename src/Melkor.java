@@ -1,4 +1,7 @@
 import jade.core.Agent;
+import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAException;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
@@ -21,13 +24,34 @@ public class Melkor extends Agent {
         Melkor.mainContainer = mainContainer;
     }
 
+    @Override
+    protected void setup(){
+        DFServiceHelper.registerAgentInYellowPages(this, "DarkMelkor", "LordOfEverything");
+        addBehaviour(new CyclicBehaviour() {
+            @Override
+            public void action() {
+                System.out.println("Azaza");
+                if(getAverageTaxiWaitingTime()>60)
+                {
+                    incrementDriversCount();
+                }
+                driverWaitingTimeArray.clear();
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
     public static synchronized void incrementDriversCount(){
         Agent aeroDriverAgent = new DriverAgent();
         AgentController aeroDriverAgentController = null;
         try {
             aeroDriverAgentController = mainContainer.acceptNewAgent("aeroDriverAgent" + driversCount, aeroDriverAgent);
             driversCount++;
-            System.out.println("Add driver");
+            System.out.println("Add driver " + driversCount);
             aeroDriverAgentController.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -40,7 +64,9 @@ public class Melkor extends Agent {
 
     public static void sleep(long timeInMillis){
         try {
+            System.out.println("start");
             Thread.sleep(timeInMillis);
+            System.out.println("finish");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -59,6 +85,15 @@ public class Melkor extends Agent {
             }
         }
         return driverWaitingTimeArray.size() != 0 ? waitingTime / driverWaitingTimeArray.size() : 0;
+    }
+
+    @Override
+    protected void takeDown() {
+        try {
+            DFService.deregister(this);
+        } catch (FIPAException e){
+            e.printStackTrace();
+        }
     }
 }
 

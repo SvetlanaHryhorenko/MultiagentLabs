@@ -260,21 +260,22 @@ public class PassengerAgent extends Agent {
             }
 
             while(!isDriverFound) {
-                long currentDriverWaitingTime = System.currentTimeMillis();
-                double currentTaxiWaitingTime = currentDriverWaitingTime - startDriverWaitingTime;
-                System.out.println(myAgent.getLocalName() + " waiting " + currentTaxiWaitingTime);
-                if(currentTaxiWaitingTime/60>1)
-                {
-                    for (DFAgentDescription aeroDriver : aeroDrivers) {
-                        ACLMessage cancellationMessage = new ACLMessage(ACLMessage.CANCEL);
-                        cancellationMessage.setReplyWith("driverCancel" + System.currentTimeMillis());
-                        cancellationMessage.setConversationId("callDriverId");
-                        cancellationMessage.addReceiver(aeroDriver.getName());
-                        myAgent.send(cancellationMessage);
-                    }
-                    System.out.println(myAgent.getLocalName() + " is tired ");
-                    return 0;
-                }
+                //for lab2(too much waiting)
+                //long currentDriverWaitingTime = System.currentTimeMillis();
+                //double currentTaxiWaitingTime = currentDriverWaitingTime - startDriverWaitingTime;
+                //System.out.println(myAgent.getLocalName() + " waiting " + currentTaxiWaitingTime);
+                //if(currentTaxiWaitingTime/60>1)
+                //{
+                //    for (DFAgentDescription aeroDriver : aeroDrivers) {
+                //        ACLMessage cancellationMessage = new ACLMessage(ACLMessage.CANCEL);
+                //        cancellationMessage.setReplyWith("driverCancel" + System.currentTimeMillis());
+                //        cancellationMessage.setConversationId("callDriverId");
+                //        cancellationMessage.addReceiver(aeroDriver.getName());
+                //        myAgent.send(cancellationMessage);
+                //    }
+                //    System.out.println(myAgent.getLocalName() + " is tired ");
+                //    return 0;
+                //}
                 switch (findDriverStepNumber) {
                     case 0:
                         aeroDrivers = DFServiceHelper.findAgents(myAgent, null, "LithuanianCar");
