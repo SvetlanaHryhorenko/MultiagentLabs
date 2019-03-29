@@ -8,24 +8,34 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.util.leap.Serializable;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 public class PassengerAgent extends Agent {
     private boolean isPassengerReadyForVisit;
-    private int xPosition;
-    private int yPosition;
     private int money = 500;
+
+    public class PassengerWay implements Serializable {
+        public int xPositionStart = 0;
+        public int yPositionStart = 0;
+        public int xPositionFinish = 0;
+        public int yPositionFinish = 0;
+    }
+
+    PassengerWay way = new PassengerWay();
 
     @Override
     protected void setup(){
         isPassengerReadyForVisit = false;
 
-        Random rand = new Random();
-        xPosition = rand.nextInt(Melkor.xCity);
-        yPosition = rand.nextInt(Melkor.yCity);
+        //Random rand = new Random();
+        //xPosition = rand.nextInt(Melkor.xCity);
+        //yPosition = rand.nextInt(Melkor.yCity);
 
         DFServiceHelper.registerAgentInYellowPages(this, "Passenger", "Visit");
 
@@ -252,12 +262,20 @@ public class PassengerAgent extends Agent {
             } catch(NullPointerException e){
                 e.printStackTrace();
             }
-            long distance = (long) (Math.random()*(1000 - 100));
-            if(distance>money)
-            {
-                System.out.println(myAgent.getLocalName() + " has no money");
-                return 0;
-            }
+            Random rand = new Random();
+            way.xPositionStart = rand.nextInt(Melkor.xCity);
+            way.yPositionStart = rand.nextInt(Melkor.yCity);
+            way.xPositionFinish = rand.nextInt(Melkor.xCity);
+            way.yPositionFinish = rand.nextInt(Melkor.yCity);
+            long distance = (long) (Math.sqrt((way.xPositionFinish-way.xPositionStart)*(way.xPositionFinish-way.xPositionStart)
+                    +(way.yPositionFinish-way.yPositionStart)*(way.yPositionFinish-way.yPositionStart)));
+
+            //lab2
+            //if(distance>money)
+            //{
+            //    System.out.println(myAgent.getLocalName() + " has no money");
+            //    return 0;
+            //}
 
             while(!isDriverFound) {
                 //for lab2(too much waiting)
@@ -333,7 +351,7 @@ public class PassengerAgent extends Agent {
                             Melkor.addDriverWaitingTime((long) taxiWaitingTime);
 
                             try {
-                                confirmationMessage.setContentObject((long) (Math.random()*(1000 - 100)));
+                                confirmationMessage.setContentObject(way);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

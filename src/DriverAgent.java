@@ -15,8 +15,8 @@ public class DriverAgent extends Agent {
     boolean isDriverFree;
     private MessageTemplate mt;
 
-    private int xPosition;
-    private int yPosition;
+    public int xPosition;
+    public int yPosition;
 
     private Integer driverStepNumber = 0;
 
@@ -77,10 +77,17 @@ public class DriverAgent extends Agent {
                         isDriverFree = true;
                     } else {
                         try {
-                            Long travelTime = (Long) confirmationMessage.getContentObject();
+                            PassengerAgent.PassengerWay way = (PassengerAgent.PassengerWay) confirmationMessage.getContentObject();
+                            long travelTime= (long) ((Math.sqrt((way.xPositionFinish-way.xPositionStart)*(way.xPositionFinish-way.xPositionStart)
+                                    +(way.yPositionFinish-way.yPositionStart)*(way.yPositionFinish-way.yPositionStart)))
+                                    + (Math.sqrt((xPosition-way.xPositionStart)*(xPosition-way.xPositionStart)
+                                    +(yPosition-way.yPositionStart)*(yPosition-way.yPositionStart))));
 
                             System.out.println("Travel time = " + travelTime + " " + myAgent.getLocalName());
                             Melkor.sleep(travelTime);
+                            xPosition = way.xPositionFinish;
+                            yPosition = way.yPositionFinish;
+
                             isDriverFree = true;
                         } catch (UnreadableException e) {
                             e.printStackTrace();

@@ -31,7 +31,7 @@ public class Melkor extends Agent {
             @Override
             public void action() {
                 System.out.println("Azaza");
-                if(getAverageTaxiWaitingTime()>60)
+                if(getAverageTaxiWaitingTime()>100)
                 {
                     incrementDriversCount();
                 }
